@@ -3,7 +3,7 @@ include_once "user/helpper/function.php";
 $ip_visitor = $_SERVER['REMOTE_ADDR'];
 addVisit($ip_visitor);
 ?>
-
+<!-- tes -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
