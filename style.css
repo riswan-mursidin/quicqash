@@ -1,0 +1,129 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap");
+
+:root {
+  --warna-gradasi-1: linear-gradient(90.39deg, #0075dd 5.66%, #05d2ff 97.43%);
+  --warna-gradasi-2: linear-gradient(90.39deg, #24ff00 5.66%, #24ff00 97.43%);
+
+  --warna-pertama: #0075dd;
+  --warna-kedua: #05d2ff;
+  --warna-paragraf: #707070;
+  --warna-dark: #000000;
+  --warna-light: #fff;
+
+  --shadow-theme: 0px 2px 2px rgba(0, 0, 0, 0.25);
+  --radius-theme: 5px;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #f7fafe;
+}
+
+html {
+  height: 100vh;
+}
+
+/* typo */
+p {
+  color: var(--warna-paragraf);
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: var(--warna-dark);
+}
+/* nabar */
+.navbar {
+  font-family: "Poppins", sans-serif;
+}
+
+.color-theme {
+  background-image: var(--warna-gradasi-1);
+}
+
+/* button */
+.btn {
+  box-shadow: var(--shadow-theme);
+}
+
+.button-grup a {
+  font-size: smaller;
+  border-radius: var(--radius-theme);
+  margin-top: 2rem;
+}
+
+.btn-primary {
+  background-image: var(--warna-gradasi-1);
+}
+
+.btn-success {
+  background-image: var(--warna-gradasi-2);
+}
+
+.tab-info {
+  background-image: var(--warna-gradasi-1);
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 5px;
+  color: var(--warna-light);
+  font-weight: bolder;
+  box-shadow: var(--shadow-theme);
+  border-radius: var(--radius-theme);
+  font-size: smaller;
+}
+
+/* section */
+#sec1 {
+  background-image: url(./img/section1.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+#sec2 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  text-align: center;
+}
+
+#sec3 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+#sec4 {
+  background-image: url(./img/section4.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+#sec5 {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+#sec6 {
+  background-image: url(./img/section4.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+#footer {
+  background-image: var(--warna-gradasi-1);
+  padding-top: 3rem;
+  padding-bottom: 1rem;
+}
+#footer a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.p-footer {
+  color: #fff;
+  font-size: smaller;
+}

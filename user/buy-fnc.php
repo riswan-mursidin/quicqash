@@ -1,0 +1,482 @@
+<?php  
+require_once "helpper/function.php";
+
+if($_SESSION['login_user_fina'] != true){
+    header('Location:auth-login');
+    exit();
+}
+
+$querylogin = "SELECT * FROM member_fina WHERE username_member='".$_SESSION['username_user']."'";
+$resultlogin = mysqli_query($conn, $querylogin);
+$rowlogin = mysqli_fetch_assoc($resultlogin);
+$fullname = $rowlogin['nama_lengkap_member'];
+$username = $rowlogin['username_member'];
+$status = $rowlogin['status_member'];
+
+if(isset($_POST['proses_upload'])){
+  $id = $_POST['id'];
+  $namefileold = $_FILES["file_upload"]["name"];
+  $file = $_FILES["file_upload"]["tmp_name"];
+  $namefilenew = md5(rand()).".".end(explode(".", $namefileold));
+  $path = "admin/bukti/";
+
+  if(!file_exists($path)){
+    mkdir($path);
+  }
+
+  $lokasi_file_nama_file = $path.$namefilenew; // path file to upload
+  $movefile = move_uploaded_file($file, $lokasi_file_nama_file);
+
+  if($movefile){
+    $dbpath = end(explode("admin/", $lokasi_file_nama_file));
+    $query = "UPDATE pembelian_fnc_fina SET foto_bukti_pembelian='$dbpath' WHERE id='$id'";
+    $result = mysqli_query($conn, $query);
+  }
+
+}
+?>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FINACOIN | LOG FNC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta content="finacoin" name="description" />
+    <meta content="galeriide" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+
+    <!-- Bootstrap Css -->
+    <link
+      href="assets/css/bootstrap.min.css"
+      id="bootstrap-style"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <!-- Icons Css -->
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link
+      href="assets/css/app.min.css"
+      id="app-style"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- Responsive datatable examples -->
+    <link
+      href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script type="text/javascript">
+            function showTime() {
+                var a_p = "";
+                var today = new Date();
+                var curr_hour = today.getHours();
+                var curr_minute = today.getMinutes();
+                var curr_second = today.getSeconds();
+                if (curr_hour < 12) {
+                    a_p = "AM";
+                } else {
+                    a_p = "PM";
+                }
+                if (curr_hour == 0) {
+                    curr_hour = 12;
+                }
+                if (curr_hour > 12) {
+                    curr_hour = curr_hour - 12;
+                }
+                curr_hour = checkTime(curr_hour);
+                curr_minute = checkTime(curr_minute);
+                curr_second = checkTime(curr_second);
+                document.getElementById('time').innerHTML=curr_hour + ":" + curr_minute + ":" + curr_second + " " + a_p;
+            }
+            
+            function checkTime(i) {
+                if (i < 10) {
+                    i = "0" + i;
+                }
+                return i;
+            }
+            setInterval(showTime, 500);         
+    </script>
+  </head>
+
+  <style>
+    body {
+      background-image: url(./assets/bg-body.jpg);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+
+  <body data-sidebar="dark">
+    <!-- <body data-layout="horizontal" data-topbar="dark"> -->
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+      <header id="page-topbar">
+        <div class="navbar-header">
+          <div class="d-flex">
+            <!-- LOGO -->
+            <div class="navbar-brand-box text-center">
+              <a href="index" class="logo logo-dark">
+                <span class="logo-sm">
+                  <img
+                    src="assets/images/logo-sm.png"
+                    alt="logo-sm-dark"
+                    height="22"
+                  />
+                </span>
+                <span class="logo-lg">
+                  <img
+                    src="assets/images/logo-dark.png"
+                    alt="logo-dark"
+                    height="24"
+                  />
+                </span>
+              </a>
+
+              <a href="index" class="logo logo-light">
+                <span class="logo-sm">
+                  <img
+                    src="assets/images/logo-sm.png"
+                    alt="logo-sm-light"
+                    height="22"
+                  />
+                </span>
+                <span class="logo-lg">
+                  <img
+                    src="assets/images/logo-light.png"
+                    alt="logo-light"
+                    height="24"
+                  />
+                </span>
+              </a>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-sm px-3 font-size-24 header-item waves-effect"
+              id="vertical-menu-btn"
+            >
+              <i class="ri-menu-2-line align-middle"></i>
+            </button>
+          </div>
+
+          <div class="d-flex">
+            <div class="dropdown d-inline-block d-lg-none ms-2">
+              <button
+                type="button"
+                class="btn header-item noti-icon waves-effect"
+                id="page-header-search-dropdown"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <i class="ri-search-line"></i>
+              </button>
+              <div
+                class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                aria-labelledby="page-header-search-dropdown"
+              >
+                <form class="p-3">
+                  <div class="mb-3 m-0">
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Search ..."
+                      />
+                      <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                          <i class="ri-search-line"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="dropdown d-none d-lg-inline-block ms-1">
+              <button
+                type="button"
+                class="btn header-item noti-icon waves-effect"
+                data-toggle="fullscreen"
+              >
+                <i class="ri-fullscreen-line"></i>
+              </button>
+            </div>
+
+            <?php require_once "user-aksi.php" ?>
+
+            <div class="dropdown d-inline-block">
+              <button
+                type="button"
+                class="btn header-item noti-icon right-bar-toggle waves-effect"
+              >
+                <i class="mdi mdi-cog"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <?php require_once "menu.php" ?>
+
+      <!-- ============================================================== -->
+      <!-- Start right Content here -->
+      <!-- ============================================================== -->
+      <div class="main-content">
+        <div class="page-content">
+          <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+              <div class="col-12">
+                <div
+                  class="
+                    page-title-box
+                    d-sm-flex
+                    align-items-center
+                    justify-content-between
+                  "
+                >
+                  <h4 class="mb-sm-0">Buy FNC Confirm</h4>
+
+                  <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                      <li class="breadcrumb-item">
+                        <span><b><?= date('D').", ".dateFormatter(date("Y-m-d")) ?></b> | <b id="time"></b></span>  
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end page title -->
+            <hr>
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="col-12">
+                      <p>
+                        Total Buy Confrim :
+                        <span class="text-success">
+                          <?php  
+                          $queryBuyApprove = "SELECT * FROM pembelian_fnc_fina WHERE status_pembelian = 'Approve' AND username_pembelian='$username'";
+                          $resultBuyApprove = mysqli_query($conn, $queryBuyApprove);
+                          $countBuyApprove = mysqli_num_rows($resultBuyApprove);
+                          ?>
+                          <b><?= $countBuyApprove ?></b>
+                        </span>
+                      </p>
+                      <p>
+                        Total Buy Waiting to Confrim :
+                        <span class="text-danger">
+                          <?php  
+                          $queryBuyNo = "SELECT * FROM pembelian_fnc_fina WHERE status_pembelian = 'No' AND username_pembelian='$username'";
+                          $resultBuyNo = mysqli_query($conn, $queryBuyNo);
+                          $countBuyNo = mysqli_num_rows($resultBuyNo);
+                          ?>
+                          <b><?= $countBuyNo ?></b>
+                        </span>
+                      </p>
+                      <hr />
+                    </div>
+                    <table id="datatable" class="table table-hover table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;" >
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Code</th>
+                          <th>Username</th>
+                          <th>USDT</th>
+                          <th>FNC</th>
+                          <th>Date</th>
+                          <th>Confirm</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <?php  
+                        $num = 0;
+                        $queryBuy = "SELECT * FROM pembelian_fnc_fina WHERE username_pembelian='$username' ORDER BY tgl_order_pembelian DESC";
+                        $resultBuy = mysqli_query($conn, $queryBuy);
+                        while($rowBuy = mysqli_fetch_assoc($resultBuy)){
+                        ?>
+                        <tr>
+                          <td><?= ++$num ?></td>
+                          <td><?= $rowBuy['kode_pembelian'] ?></td>
+                          <td><?= $rowBuy['username_pembelian'] ?></td>
+                          <td><?= $rowBuy['usdt_pembelian'] ?> USDT</td>
+                          <td><?= $rowBuy['fnc_pembelian'] ?> FNC</td>
+                          <td><?= $rowBuy['tgl_order_pembelian'] ?></td>
+                          <td><?= $confirm = $rowBuy['foto_bukti_pembelian'] == "" ? '<button data-bs-toggle="modal" data-bs-target="#upload_tf'.$rowBuy['id'].'" class="btn btn-success">Confirm</button>' : '<button class="btn btn-secondary disabled">Confirm</button>' ?></td>
+                          <td><?= $statustext = $rowBuy['status_pembelian'] == "No" ? "<span class='text-danger'>Waiting . . .</span>" : "<span class='text-success'>".$rowBuy['status_pembelian']."</span>"?></td>
+                        </tr>
+                        <?php } ?>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <?php  
+            $queryBuy = "SELECT * FROM pembelian_fnc_fina WHERE username_pembelian='$username'";
+            $resultBuy = mysqli_query($conn, $queryBuy);
+            while($rowBuy = mysqli_fetch_assoc($resultBuy)){
+            ?>
+            <!-- Modal Proses -->
+            <div class="modal fade bs-example-modal-center" tabindex="-1" id="upload_tf<?= $rowBuy['id'] ?>" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <form class="modal-content" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Order Confirm </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label for="" class="form-label">Upload Bukti Transfer</label>
+                      <input type="file" accept="img/jpeg,img/png" class="form-control" name="file_upload">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <input type="hidden" value="<?= $rowBuy['id'] ?>" name="id">
+                    <button type="submit" name="proses_upload" class="btn btn-success btn-sm">Proses</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                  </div>
+            </form>
+              </div>
+            </div>
+            <?php } ?>
+          </div>
+          <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+
+        <footer class="footer">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6">
+                <script>
+                  document.write(new Date().getFullYear());
+                </script>
+                © FINACOIN
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+      <!-- end main content-->
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!-- Right Sidebar -->
+    <div class="right-bar">
+      <div data-simplebar class="h-100">
+        <div class="rightbar-title d-flex align-items-center px-3 py-4">
+          <h5 class="m-0 me-2">Settings</h5>
+
+          <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
+            <i class="mdi mdi-close noti-icon"></i>
+          </a>
+        </div>
+
+        <!-- Settings -->
+        <hr class="mt-0" />
+        <h6 class="text-center mb-0">Choose Layouts</h6>
+
+        <div class="p-4">
+          <div class="form-check form-switch mb-3">
+            <input
+              class="form-check-input theme-choice"
+              type="checkbox"
+              id="light-mode-switch"
+              checked
+            />
+            <label class="form-check-label" for="light-mode-switch"
+              >Light Mode</label
+            >
+          </div>
+
+          <div class="form-check form-switch mb-3">
+            <input
+              class="form-check-input theme-choice"
+              type="checkbox"
+              id="dark-mode-switch"
+              data-bsStyle="assets/css/bootstrap-dark.min.css"
+              data-appStyle="assets/css/app-dark.min.css"
+            />
+            <label class="form-check-label" for="dark-mode-switch"
+              >Dark Mode</label
+            >
+          </div>
+
+          <div class="form-check form-switch mb-5">
+            <input
+              class="form-check-input theme-choice"
+              type="checkbox"
+              id="rtl-mode-switch"
+              data-appStyle="assets/css/app-rtl.min.css"
+            />
+            <label class="form-check-label" for="rtl-mode-switch"
+              >RTL Mode</label
+            >
+          </div>
+        </div>
+      </div>
+      <!-- end slimscroll-menu-->
+    </div>
+    <!-- /Right-bar -->
+
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+
+    <!-- Required datatable js -->
+    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- JAVASCRIPT -->
+    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
+
+    <!-- Required datatable js -->
+    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+
+    <!-- Responsive examples -->
+    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+    <!-- Datatable init js -->
+    <script src="assets/js/pages/datatables.init.js"></script>
+
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
