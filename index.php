@@ -10,6 +10,10 @@ addVisit($ip_visitor);
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Quicqash adalah situs investasi yang membuat anda mendapatkan keuntungan setiap harinya hingga 300%"
+    />
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="img/favicon.png" type="image/gif" />
     <link
@@ -25,7 +29,7 @@ addVisit($ip_visitor);
       crossorigin="anonymous"
     />
 
-    <title>FINACOIN</title>
+    <title> </title>
   </head>
   <body>
     <!-- Navbar -->
