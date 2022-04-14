@@ -1,9 +1,69 @@
 <?php  
 include_once "helpper/function.php";
-
+$error_status = "";
 if($_SESSION['login_admin_fina'] != true){
   header('Location:auth-login');
   exit();
+}
+
+$action = $_GET['aksi'];
+$idData = $_GET['id'];
+
+if($action != "" || $idData != ""){
+  $querycheck = "SELECT * FROM bank_admin WHERE id='$idData'";
+  $resultcheck = mysqli_query($conn, $querycheck);
+  if(mysqli_num_rows($resultcheck) == 0){
+    header('Location: setting-admin');
+    exit();
+  }else{
+    if($action == "edit"){
+      $rowcheck = mysqli_fetch_assoc($resultcheck);
+    }elseif($action == "delete"){
+      $querydel = "DELETE FROM bank_admin WHERE id='$idData'";
+      $result = mysqli_query($conn, $querydel);
+      if($result){
+        header('Location: setting-admin');
+        exit();
+      }
+    }else{
+      header('Location: setting-admin');
+      exit();
+    }
+  }
+}
+
+if(isset($_POST['submit_rek'])){
+  $nama_pemilik = nameFormater($_POST['atas_nama']);
+  $nama_bank = $_POST['nama_bank'];
+  $no_rek = $_POST['no_rek'];
+  
+  if($idData != ""){
+    $query = "SELECT * FROM bank_admin WHERE id<>'$idData' AND nama_bank='$nama_bank'";
+    $result = mysqli_query($conn, $query);
+    if(mysqli_num_rows($result) > 0){
+      $error_status = "Bank sudah Ada!";
+    }else{
+      $query = "UPDATE bank_admin SET nama_rek='$nama_pemilik', nama_bank='$nama_bank', no_rek='$no_rek' WHERE id='$idData'";
+      $result = mysqli_query($conn, $query);
+      if($result){
+        header('Location: setting-admin');
+        exit();
+      }
+    }
+  }else{
+    $query = "SELECT * FROM bank_admin WHERE nama_bank='$nama_bank'";
+    $result = mysqli_query($conn, $query);
+    if(mysqli_num_rows($result) > 0){
+      $error_status = "Bank sudah Ada!";
+    }else{
+      $query = "INSERT INTO bank_admin (nama_rek,nama_bank,no_rek) VALUE('$nama_pemilik','$nama_bank','$no_rek')";
+      $result = mysqli_query($conn, $query);
+      if($result){
+        header('Location: setting-admin');
+        exit();
+      }
+    }
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -394,30 +454,56 @@ if($_SESSION['login_admin_fina'] != true){
             </div>
             <!-- end page title -->
             <div class="row">
+            <?php if($error_status != ""){ ?>
+              <div class="col-12">
+                <div class="mb-4">
+                  <div class="alert alert-warning alert-dismissible fade show mb-0" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <?= $error_status ?>
+                  </div>
+                </div>
+              </div>
+            <?php } ?>
               <!-- Info bonus pasangan -->
               <div class="col-12 col-sm-4">
                 <div class="card">
                   <div class="card-header">Tambah & Edit Rekening</div>
-                  <form class="card-body" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                  <form class="card-body" action="" method="post">
                     <div class="row mb-3">
                       <div class="col-12 col-sm-12 mb-3">
                         <label for="" class="form-label">Atas Nama</label>
-                        <input type="text" class="form-control" name="atas_nama" value="" placeholder="Pemilik Rekening">
+                        <input required type="text" class="form-control" name="atas_nama" value="<?= $idData != "" ? $rowcheck['nama_rek'] : $_POST['atas_nama'] ?>" placeholder="Pemilik Rekening">
                       </div>
                       <div class="col-12 col-sm-12 mb-3">
                         <label for="" class="form-label">Bank</label>
-                        <select class="form-select" name="bank" name="nama_bank" id="">
+                        <select required class="form-select" name="nama_bank" id="">
                           <option value="" hidden>PILIH BANK</option>
+                          <?php  
+                          $opts = array(
+                            'Bank Mandiri',
+                            'Bank Rakyat Indonesia (BRI)',
+                            'Bank Negara Indonesia (BNI)',
+                            'Panin Bank',
+                            'CIMB Niaga',
+                            'Bank Central Asia (BCA)',
+                            'Bank Tabungan Negara (BTN)'
+                          );
+                          $val = $idData != "" ? $rowcheck['nama_bank'] : $_POST['nama_bank'];
+                          foreach($opts as $opt){
+                            $selected = $val == $opt ? 'selected="selected"' : '';
+                          ?>
+                            <option value="<?= $opt ?>" <?= $selected ?>><?= $opt ?></option>
+                          <?php } ?>
                         </select>
                       </div>
                       <div class="col-12 col-sm-12 mb-3">
                         <label for="" class="form-label">No. Rek</label>
-                        <input type="number" class="form-control" name="no_rek" value="" placeholder="Nomor Rekening">
+                        <input required type="number" class="form-control" name="no_rek" value="<?= $idData != "" ? $rowcheck['no_rek'] : $_POST['no_rek'] ?>" placeholder="Nomor Rekening">
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-12 col-sm-12 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-success" name="edit_wallet">Submit</button>
+                        <button type="submit" class="btn btn-success" name="submit_rek">Submit</button>
                       </div>
                     </div>
                   </form>
@@ -437,13 +523,30 @@ if($_SESSION['login_admin_fina'] != true){
                         </tr>
                       </thead>
                       <tbody>
-                        
+                        <?php  
+                        $query = "SELECT * FROM bank_admin ORDER BY nama_bank ASC";
+                        $result = mysqli_query($conn, $query);
+                        while($row=mysqli_fetch_assoc($result)){
+                        ?>
                         <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td><?= $row['nama_rek'] ?></td>
+                          <td><?= $row['nama_bank'] ?></td>
+                          <td><?= $row['no_rek'] ?></td>
+                          <td>
+                          <div class="btn-group btn-group-toggle mt-2 mt-lg-0" data-bs-toggle="buttons">
+                              <a href="setting-admin?aksi=edit&id=<?= $row['id'] ?>" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="edit">
+                                <i class="mdi mdi-square-edit-outline"></i>
+                              </a>
+                              <button onclick="copyPin('<?= $row['no_rek'] ?>')" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy">
+                                <i class="mdi mdi-content-copy"></i>
+                              </button>
+                              <a href="setting-admin?aksi=delete&id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="delete">
+                                <i class="mdi mdi-delete"></i>
+                              </a>
+                            </div>
+                          </td>
                         </tr>
+                        <?php } ?>
                       </tbody>
                     </table>
                   </div>
@@ -572,6 +675,13 @@ if($_SESSION['login_admin_fina'] != true){
     <script src="assets/js/pages/sweet-alerts.init.js"></script>
 
     <script src="assets/js/app.js"></script>
+    <script>
+      function copyPin(pin){
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(pin);
+        alert("Copied Rek Number: " + pin);
+      }
+    </script>
   </body>
 </html>
 <?php mysqli_close($conn) ?>
