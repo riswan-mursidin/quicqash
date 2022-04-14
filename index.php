@@ -29,7 +29,7 @@ addVisit($ip_visitor);
       crossorigin="anonymous"
     />
 
-    <title> </title>
+    <title>Quicqash </title>
   </head>
   <body>
     <!-- Navbar -->

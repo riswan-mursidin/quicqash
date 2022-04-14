@@ -386,188 +386,71 @@ if($_SESSION['login_admin_fina'] != true){
                       <li class="breadcrumb-item">
                         <a href="javascript: void(0);">Setting Admin</a>
                       </li>
-                      <li class="breadcrumb-item active">Token Wallet</li>
+                      <li class="breadcrumb-item active">Rekening Wallet</li>
                     </ol>
                   </div>
                 </div>
               </div>
             </div>
             <!-- end page title -->
-            <?php  
-            if(isset($_POST['edit_wallet'])){
-              $wallet_admin = $_POST['wallet_admin'];
-              $queryUpdate = "UPDATE admin_fina SET wallet_admin='$wallet_admin'";
-              $resultUpdate = mysqli_query($conn, $queryUpdate);
-            }
-            ?>
             <div class="row">
               <!-- Info bonus pasangan -->
-              <div class="col-12 col-sm-12">
+              <div class="col-12 col-sm-4">
                 <div class="card">
+                  <div class="card-header">Tambah & Edit Rekening</div>
                   <form class="card-body" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                     <div class="row mb-3">
-                      <div class="col-12 col-sm-6">
-                        <?php  
-                        $queryview = "SELECT wallet_admin FROM admin_fina";
-                        $resultview = mysqli_query($conn, $queryview);
-                        $rowview = mysqli_fetch_assoc($resultview);
-                        ?> 
-                        <label for="" class="form-label">Token Wallet</label>
-                        <input type="text" class="form-control" name="wallet_admin" value="<?= $rowview['wallet_admin'] ?>">
+                      <div class="col-12 col-sm-12 mb-3">
+                        <label for="" class="form-label">Atas Nama</label>
+                        <input type="text" class="form-control" name="atas_nama" value="" placeholder="Pemilik Rekening">
+                      </div>
+                      <div class="col-12 col-sm-12 mb-3">
+                        <label for="" class="form-label">Bank</label>
+                        <select class="form-select" name="bank" name="nama_bank" id="">
+                          <option value="" hidden>PILIH BANK</option>
+                        </select>
+                      </div>
+                      <div class="col-12 col-sm-12 mb-3">
+                        <label for="" class="form-label">No. Rek</label>
+                        <input type="number" class="form-control" name="no_rek" value="" placeholder="Nomor Rekening">
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-12 col-sm-6">
-                        <button type="submit" class="btn btn-success" name="edit_wallet">Edit</button>
+                      <div class="col-12 col-sm-12 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-success" name="edit_wallet">Submit</button>
                       </div>
                     </div>
-
-                    <!-- <div class="col-4 d-grid">
-                      <button
-                        type="button"
-                        class="btn btn-primary waves-effect waves-light mb-3"
-                        id="sa-success"
-                      >
-                        Save
-                      </button>
-                    </div> -->
                   </form>
                 </div>
               </div>
-              <!-- Akhir Info Bonus pasangan -->
-              <!--  Info reward-->
-              <!-- <div class="col-12 col-sm-6">
+              <div class="col-12 col-sm-8">
                 <div class="card">
+                  <div class="card-header">Data Rekening</div>
                   <div class="card-body">
-                    <div class="row">
-                      <div class="col-12 mb-3">
-                        <label for="example-text-input" class="form-label"
-                          >NAMA REWARD
-                        </label>
-                        <input
-                          class="form-control"
-                          type="text"
-                          value="Cash Reward $ 200"
-                          id="example-text-input"
-                        />
-                      </div>
-
-                      <div class="col-6 mb-3">
-                        <label for="example-text-input" class="form-label"
-                          >Syarat Kiri
-                        </label>
-                        <input
-                          class="form-control"
-                          type="number"
-                          value="2000"
-                          id="example-text-input"
-                        />
-                      </div>
-
-                      <div class="col-6 mb-3">
-                        <label for="example-text-input" class="form-label"
-                          >Syarat Kanan
-                        </label>
-                        <input
-                          class="form-control"
-                          type="number"
-                          value="2000"
-                          id="example-text-input"
-                        />
-                      </div>
-
-                      <div class="col-12">
-                        <button
-                          type="button"
-                          class="
-                            btn btn-primary
-                            waves-effect waves-light
-                            mt-3
-                            text-end
-                          "
-                        >
-                          + Save
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-              <!-- Akhir info reward -->
-
-              <!-- list Reward -->
-
-              <!-- <div class="col-12">
-                <div class="card">
-                  <div class="card-body">
-                    <p>List Reward</p>
-                    <table
-                      id="datatable"
-                      class="
-                        table table-bordered
-                        dt-responsive
-                        table-responsive
-                      "
-                      style="
-                        border-collapse: collapse;
-                        border-spacing: 0;
-                        width: 100%;
-                      "
-                    >
+                    <table id="datatable" class="table table-hover table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;" >
                       <thead>
                         <tr>
-                          <th>#</th>
-                          <th>Nama Reward</th>
-                          <th>Syarat Kiri</th>
-                          <th>Syarat Kanan</th>
-                          <th>Action</th>
+                          <td>Atas Nama</td>
+                          <td>Bank</td>
+                          <td>No Rek</td>
+                          <td>Action</td>
                         </tr>
                       </thead>
-
                       <tbody>
+                        
                         <tr>
-                          <td>1</td>
-                          <td>Cash Reward $ 200</td>
-                          <td>2000</td>
-                          <td>2000</td>
-
-                          <td>
-                            <div
-                              class="btn-group btn-group-toggle mt-2 mt-lg-0"
-                              data-bs-toggle="buttons"
-                            >
-                              <div>
-                                <a
-                                  href="edit-reward.html"
-                                  class="btn btn-warning btn-sm me-1"
-                                  data-bs-toggle="tooltip"
-                                  data-bs-placement="top"
-                                  title="Edit "
-                                >
-                                  <i class="mdi mdi-clipboard-edit-outline"></i>
-                                  Edit
-                                </a>
-                              </div>
-                              <div>
-                                <a
-                                  href=""
-                                  class="btn btn-danger btn-sm"
-                                  data-bs-toggle="tooltip"
-                                  data-bs-placement="top"
-                                  title="Delete "
-                                >
-                                  <i class="mdi mdi-delete-alert"></i>
-                                  Delete
-                                </a>
-                              </div>
-                            </div>
-                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-              </div> -->
+              </div>
+              <!-- Akhir Info Bonus pasangan -->
+              
               <!-- listreward -->
             </div>
             <!-- end row -->

@@ -17,6 +17,17 @@ if(isset($_POST['edit_staking'])){
     $warning_status = "Edit data is Failed";
   }
 }
+
+if(isset($_POST['edit_staking_max'])){
+  $price_staking = $_POST['price_staking'];
+  $query = "UPDATE max_stacking SET persen='$price_staking' WHERE id='1'";
+  $result = mysqli_query($conn, $query);
+  if($result){
+    $warning_status = "Edit data is successfuly";
+  }else{
+    $warning_status = "Edit data is Failed";
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -425,7 +436,7 @@ if(isset($_POST['edit_staking'])){
                           <input type="text" readonly class="form-control" value="<?= $simbol ?>">
                         </div>
                         <div class="col-3 col-sm-3">
-                          <label for="">Price </label>
+                          <label for="">Fee </label>
                         </div>
                         <div class="col-9 col-sm-9 mb-3">
                           <input type="number" name="price_staking" step='0.01' class="form-control" value="<?= $rowSetting['amount_setting'] ?>">
@@ -441,6 +452,49 @@ if(isset($_POST['edit_staking'])){
               </div><!-- /.modal-dialog -->
             </div>
             <?php } ?>
+
+            <?php  
+            $querymaxx = "SELECT * FROM max_stacking WHERE id='1'";
+            $resultmaxx = mysqli_query($conn, $querymaxx);
+            $rowmaxx = mysqli_fetch_assoc($resultmaxx);
+            $max = $rowmaxx['persen'];
+            ?>
+            <div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog" id="editpackagemax" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                  <form class="modal-content" method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Edit Staking Bonus</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-3 col-sm-3">
+                          <label for="">Package </label>
+                        </div>
+                        <div class="col-9 col-sm-9 mb-3">
+                          <input type="text" readonly class="form-control" value="Maximal Bonus">
+                        </div>
+                        <div class="col-3 col-sm-3">
+                          <label for="">Amount </label>
+                        </div>
+                        <div class="col-9 col-sm-9 mb-3">
+                          <input type="text" readonly class="form-control" value="%">
+                        </div>
+                        <div class="col-3 col-sm-3">
+                          <label for="">Fee </label>
+                        </div>
+                        <div class="col-9 col-sm-9 mb-3">
+                          <input type="number" name="price_staking" step='0.01' class="form-control" value="<?= $max ?>">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" name="edit_staking_max" class="btn btn-primary">Save</button>
+                      <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                    </div>
+                  </form><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div>
             <!-- end modal edit -->
             <!-- end page title -->
             <!-- Edit Staking ROI -->
@@ -458,18 +512,15 @@ if(isset($_POST['edit_staking'])){
                 <?php } ?>
                 <div class="card">
                   <div class="card-body">
-                    <p class="text-dark"><b>Staking Configuration</b></p>
+                    <p class="text-dark"><b>Invest Configuration</b></p>
                     <hr />
                     <div class="row">
                       <div class="col-12 col-sm-12 mb-3">
-                        <label for="example-text-input" class="form-label"
-                          >Staking Bonus
-                        </label>
                         <table class="table table-hover table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                           <thead>
                             <tr>
                               <th>Package</th>
-                              <th>Profit</th>
+                              <th>Fee</th>
                               <th>Action</th>
                             </tr>
                           </thead>
@@ -488,6 +539,13 @@ if(isset($_POST['edit_staking'])){
                               </td>
                             </tr>
                             <?php } ?>
+                            <tr>
+                              <td>Maximal Bonus</td>
+                              <td><?= $max ?>%</td>
+                              <td>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#editpackagemax" class="btn btn-outline-success btn-sm">Edit</button>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
